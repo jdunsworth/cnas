@@ -4,7 +4,15 @@ module.exports = {
   port: 9999,
 
   // TTS Voice
-  ttsVoice: 'Microsoft Zira Desktop',
+  ttsVoice: 'Microsoft David Desktop', // Microsoft Zira Desktop
+
+  // List of valid .wav files in /sounds/
+  validAlertWavs: [
+    'hilo',
+    'warning',
+    'alert',
+    'beeps',
+  ],
 
   /**
    * NWS Alert API Configuration
@@ -15,16 +23,16 @@ module.exports = {
 
     // States
     areas: [
-      'OK',
+      // 'OK',
       'TX',
-      'AR',
-      'MS',
-      'KS',
+      // 'AR',
+      // 'MS',
+      // 'KS',
       // 'MO',
     ],
     severity: [
       // 'moderate',
-      // 'severe',
+      'severe',
       'extreme',
     ],
 
@@ -36,6 +44,8 @@ module.exports = {
       // 'test',
       // 'draft',
     ],
+
+    // Individual Alerts
     alerts: [
       // '911 Telephone Outage Emergency',
       // 'Administrative Message',
@@ -144,8 +154,8 @@ module.exports = {
       // 'Storm Warning',
       // 'Storm Watch',
       // 'Test',
-      'Tornado Warning',
-      'Tornado Watch',
+      // 'Tornado Warning',
+      // 'Tornado Watch',
       // 'Tropical Depression Local Statement',
       // 'Tropical Storm Local Statement',
       // 'Tropical Storm Warning',
