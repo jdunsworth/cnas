@@ -58,7 +58,6 @@ app.get('/nws/alerts', async (req, res) => {
       area: alertAreas,
     },
   }).then((res) => {
-    console.log(res);
 
     let weatherData = res.data.features;
     let weatherAlerts = [];

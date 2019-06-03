@@ -24,9 +24,15 @@
     </style>
 
     <script>
-      $(document).ready(function() { });
+
+      let nwsRefreshTimer;
+      $(document).ready(function() {
+        retrieveNWSAlerts();
+      });
 
       function retrieveNWSAlerts(){
+
+        clearTimeout(nwsRefreshTimer);
 
         $('#alertLoading').show();
         $('#alertList').hide();
@@ -37,7 +43,7 @@
 
           $.each(data.weatherAlerts, function(alertIndex, alert) {
 
-            let alertMessage = alert.headline;
+            let alertMessage = alert.headline + ' affecting ' + alert.area;
 
             $('#alertList').append('<li class="list-group-item" onclick="fillAlert(\'' + alertMessage + '\')">' + alertMessage + '</li>')
           });
@@ -46,6 +52,8 @@
           $('#alertLoading').hide();
           $('#getAlertBtn').removeClass('btn-disabled').removeAttr('disabled','disabled');
         });
+
+        setTimeout(retrieveNWSAlerts, 60000);
       }
 
       function fillAlert(message){
