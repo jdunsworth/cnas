@@ -49,7 +49,19 @@
               alertMessage += moment(alert.dates.effective).format('MMMM Do [at] hh:mm A');
               alertMessage += (alert.dates.ends) ? ' until ' + moment(alert.dates.ends).format('MMMM Do [at] hh:mm A') : '';
               alertMessage += ' affecting ';
-              alertMessage += (alert.area.split(';').length > 1) ? ' areas of ' + alert.area : alert.area;
+              alertMessage += (alert.area.split(';').length > 1) ? 'areas of ' + alert.area : alert.area;
+
+              // Transform Alert Messages for States
+              alertMessage = alertMessage.replace(/, OK/g, ', Oklahoma');
+              alertMessage = alertMessage.replace(/, TX/g, ', Texas');
+              alertMessage = alertMessage.replace(/, MO/g, ', Missouri');
+              alertMessage = alertMessage.replace(/, AR/g, ', Arkansas');
+              alertMessage = alertMessage.replace(/, MS/g, ', Mississippi');
+              alertMessage = alertMessage.replace(/, KS/g, ', Kansas');
+              alertMessage = alertMessage.replace(/, NM/g, ', New Mexico');
+              alertMessage = alertMessage.replace(/, IL/g, ', Illinois');
+              alertMessage = alertMessage.replace(/, TN/g, ', Tennessee');
+              alertMessage = alertMessage.replace(/, KY/g, ', Kentucky');
 
               // Create Severity Classes
               let alertSeverityClass = (alert.severity === 'Extreme') ? 'danger' : (alert.severity == 'Severe') ? 'warning' : 'success';

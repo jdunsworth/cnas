@@ -4,7 +4,7 @@ module.exports = {
   port: 9999,
 
   // TTS Voice
-  ttsVoice: 'Microsoft Zira Desktop', // Microsoft David Desktop
+  ttsVoice: 'Microsoft David Desktop', // Microsoft Zira Desktop
 
   // List of valid .wav files in /sounds/
   validAlertWavs: [
