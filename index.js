@@ -130,7 +130,7 @@ app.get('/alert/say', async (req, res) => {
   }
 
   // TTS
-  await say.speak(alert, config.ttsVoice, 1, async (err) => {
+  await say.speak(alert, config.ttsVoice, 0.90 , async (err) => {
 
     // Determine if we have a postamble, it's valid, then play it
     if (postamble && config.validAlertWavs.includes(postamble)){

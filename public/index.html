@@ -43,7 +43,11 @@
 
           $.each(data.weatherAlerts, function(alertIndex, alert) {
 
-            let alertMessage = alert.headline + ' affecting ' + alert.area;
+            let alertMessage = 'A ' + alert.event + ' has been issued on ';
+            alertMessage += moment(alert.dates.effective).format('MMMM Do [at] hh:mm A');
+            alertMessage += (alert.dates.ends) ? ' until ' + moment(alert.dates.ends).format('MMMM Do [at] hh:mm A') : '';
+            alertMessage += ' affecting ';
+            alertMessage += (alert.area.split(';').length > 1) ? ' areas of ' + alert.area : alert.area;
 
             $('#alertList').append('<li class="list-group-item" onclick="fillAlert(\'' + alertMessage + '\')">' + alertMessage + '</li>')
           });
