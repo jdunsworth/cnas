@@ -6,26 +6,20 @@
     <meta name="description" content="Cajun Navy Alert System">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-
     <style>
-      body {
-        background: #E0E0E0;  /* fallback for old browsers */
-      }
+      body { background: #E0E0E0; }
+      .tableAlertRow { cursor: pointer; }
     </style>
 
     <script>
-
       let nwsRefreshTimer;
+
       $(document).ready(function() {
         retrieveNWSAlerts();
       });
@@ -34,30 +28,58 @@
 
         clearTimeout(nwsRefreshTimer);
 
+        $('#alertMessage').html('Retrieving Alerts...');
         $('#alertLoading').show();
-        $('#alertList').hide();
+        $('#alertTable').hide();
         $('#getAlertBtn').addClass('btn-disabled').attr('disabled','disabled');
         $('#alertList').empty();
 
         $.get('/nws/alerts', function(data) {
+          console.log(data.weatherAlerts);
 
-          $.each(data.weatherAlerts, function(alertIndex, alert) {
+          if(data.weatherAlerts.length === 0){
+            $('#alertMessage').html('No Active Alerts Found!');
+            console.log('No Active Alerts Found');
+          } else {
 
-            let alertMessage = 'A ' + alert.event + ' has been issued on ';
-            alertMessage += moment(alert.dates.effective).format('MMMM Do [at] hh:mm A');
-            alertMessage += (alert.dates.ends) ? ' until ' + moment(alert.dates.ends).format('MMMM Do [at] hh:mm A') : '';
-            alertMessage += ' affecting ';
-            alertMessage += (alert.area.split(';').length > 1) ? ' areas of ' + alert.area : alert.area;
+            $.each(data.weatherAlerts, function(alertIndex, alert) {
 
-            $('#alertList').append('<li class="list-group-item" onclick="fillAlert(\'' + alertMessage + '\')">' + alertMessage + '</li>')
-          });
+              // Create spoken message
+              let alertMessage = 'A ' + alert.event + ' has been issued on ';
+              alertMessage += moment(alert.dates.effective).format('MMMM Do [at] hh:mm A');
+              alertMessage += (alert.dates.ends) ? ' until ' + moment(alert.dates.ends).format('MMMM Do [at] hh:mm A') : '';
+              alertMessage += ' affecting ';
+              alertMessage += (alert.area.split(';').length > 1) ? ' areas of ' + alert.area : alert.area;
 
-          $('#alertList').show();
-          $('#alertLoading').hide();
+              // Create Severity Classes
+              let alertSeverityClass = (alert.severity === 'Extreme') ? 'danger' : (alert.severity == 'Severe') ? 'warning' : 'success';
+
+              // Start Creating the row
+              let alertRow = '<tr class="tableAlertRow table-' + alertSeverityClass + '" onclick="fillAlert(\'' + alertMessage + '\')">';
+              alertRow += '  <td>';
+              alertRow += '<span class="badge badge-' + alertSeverityClass + '">' + alert.event + '</span><br />';
+              alertRow += '<span class="badge badge-' + alertSeverityClass + '">' + alert.severity + '</span>';
+              alertRow += '  </td>';
+              alertRow += '  <td>';
+              alertRow += moment(alert.dates.effective).format('MMM D hh:mma') + ' (<small>' + moment(alert.dates.effective).fromNow() + '</small>)';
+              if(alert.dates.ends) {
+                alertRow += '<br />' + moment(alert.dates.ends).format('MMM D hh:mma') + ' (<small>' + moment(alert.dates.ends).fromNow() + '</small>)';
+              }
+              alertRow += '  <td>' + alert.area + '</td>';
+              alertRow += '</tr>';
+              console.log(alertRow);
+
+              $('#alertList').append(alertRow);
+            });
+
+            $('#alertTable').show();
+            $('#alertLoading').hide();
+          }
+
           $('#getAlertBtn').removeClass('btn-disabled').removeAttr('disabled','disabled');
         });
 
-        setTimeout(retrieveNWSAlerts, 60000);
+        setTimeout(retrieveNWSAlerts, 240000);
       }
 
       function fillAlert(message){
@@ -68,13 +90,11 @@
         var alertText = $('#alertText').val();
         var alertPreamble = $('#alertPreamble').val();
         var alertPostamble = $('#alertPreaalertPostamblemble').val();
-
         if(alertText.length > 0){
           $.get('/alert/say', { alert: alertText, preamble: alertPreamble, postamble: alertPostamble });
         } else {
           alert('You must include some text to send as your alert.')
         }
-
       }
     </script>
 
@@ -84,10 +104,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm">
-
-          <h3 class="text-center">Cajun Navy Audio Alerts</h3>
-
-
+          <h2 class="text-center">Cajun Navy Audio Alert System</h2>
           <div class="card" style="margin-top: 15px;">
 
             <div class="card-body">
@@ -96,7 +113,6 @@
                 <label for="alertText">Alert Text</label>
                 <input type="text" class="form-control" id="alertText" placeholder="Alert Text..." value="This is a test">
               </div>
-
 
               <div class="row">
                 <div class="col-sm-12 col-md-6">
@@ -112,7 +128,6 @@
                   </div>
                 </div>
                 <div class="col-sm-12 col-md-6">
-
                   <div class="form-group">
                     <label for="alertPostamble">Alert Postamble Tone</label>
                     <select class="form-control" id="alertPostamble">
@@ -123,13 +138,9 @@
                       <option value="warning">Warning (LONG)</option>
                     </select>
                   </div>
-
                 </div>
               </div>
-
-
               <button class="btn btn-success" type="button" name="action" onclick="sendAlert();">Send Alert</button>
-
             </div>
           </div>
 
@@ -140,22 +151,23 @@
                 <button class="btn btn-success float-right" id="getAlertBtn" type="button" onclick="retrieveNWSAlerts();">Get Alerts</button>
               </h4>
             </div>
-
             <div id="alertLoading" class="p-5" style="display:none;">
-              <h3 class="text-center">Retrieving Alerts...</h3>
+              <h3 class="text-center" id="alertMessage">Retrieving Alerts...</h3>
             </div>
-
-            <ul id="alertList" class="list-group list-group-flush" style="display:none;">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>
-
-
+            <table class="table" id="alertTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th width="150" scope="col">Alert</th>
+                  <th width="250" scope="col">
+                    Alert Effective Date<br />
+                    Alert Ends
+                  </th>
+                  <th scope="col">Area</th>
+                </tr>
+              </thead>
+              <tbody id="alertList"></tbody>
+            </table>
           </div>
-
-
-
 
         </div>
       </div>
