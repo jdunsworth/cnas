@@ -35,11 +35,11 @@
         $('#alertList').empty();
 
         $.get('/nws/alerts', function(data) {
-          console.log(data.weatherAlerts);
 
-          if(data.weatherAlerts.length === 0){
+          if(!data.weatherAlerts) {
+            $('#alertMessage').html('Error Retrieving Alerts');
+          } else if(data.weatherAlerts.length === 0){
             $('#alertMessage').html('No Active Alerts Found!');
-            console.log('No Active Alerts Found');
           } else {
 
             $.each(data.weatherAlerts, function(alertIndex, alert) {
@@ -67,7 +67,6 @@
               }
               alertRow += '  <td>' + alert.area + '</td>';
               alertRow += '</tr>';
-              console.log(alertRow);
 
               $('#alertList').append(alertRow);
             });
@@ -79,7 +78,7 @@
           $('#getAlertBtn').removeClass('btn-disabled').removeAttr('disabled','disabled');
         });
 
-        setTimeout(retrieveNWSAlerts, 240000);
+        setTimeout(retrieveNWSAlerts, 60000);
       }
 
       function fillAlert(message){

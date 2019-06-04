@@ -141,8 +141,6 @@ app.get('/alert/say', async (req, res) => {
         console.error('Unable to play sound: ', error);
       });
     }
-
-
   });
 
 

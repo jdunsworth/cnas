@@ -4,7 +4,7 @@ module.exports = {
   port: 9999,
 
   // TTS Voice
-  ttsVoice: 'Microsoft David Desktop', // Microsoft Zira Desktop
+  ttsVoice: 'Microsoft Zira Desktop', // Microsoft David Desktop
 
   // List of valid .wav files in /sounds/
   validAlertWavs: [
@@ -23,12 +23,12 @@ module.exports = {
 
     // States
     areas: [
-      // 'OK',
+      'OK',
       'TX',
-      // 'AR',
-      // 'MS',
-      // 'KS',
-      // 'MO',
+      'AR',
+      'MS',
+      'KS',
+      'MO',
     ],
     severity: [
       // 'moderate',
